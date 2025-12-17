@@ -2,11 +2,22 @@ import { useMemo, useState } from 'react'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from 'firebase/auth'
 import { auth } from './firebase'
 
-export default function Login() {
+function normalizeInitials(raw) {
+  return (raw ?? '')
+    .toString()
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '')
+    .slice(0, 4)
+}
+
+export default function Login({ onProfileUpdated }) {
   const [mode, setMode] = useState('signin') // 'signin' | 'signup'
+  const [initials, setInitials] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -23,7 +34,18 @@ export default function Login() {
     setIsSubmitting(true)
     try {
       if (mode === 'signup') {
-        await createUserWithEmailAndPassword(auth, email, password)
+        const nextInitials = normalizeInitials(initials)
+        if (!nextInitials) {
+          setError('Please enter your initials (1–4 letters/numbers).')
+          return
+        }
+        const credential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        )
+        await updateProfile(credential.user, { displayName: nextInitials })
+        onProfileUpdated?.()
       } else {
         await signInWithEmailAndPassword(auth, email, password)
       }
@@ -39,6 +61,22 @@ export default function Login() {
       <h2 className="auth__title">{title}</h2>
 
       <form className="auth__form" onSubmit={onSubmit}>
+        {mode === 'signup' ? (
+          <label className="auth__label">
+            Initials
+            <input
+              className="auth__input"
+              type="text"
+              autoComplete="nickname"
+              inputMode="text"
+              value={initials}
+              onChange={(e) => setInitials(e.target.value)}
+              required
+              maxLength={10}
+            />
+          </label>
+        ) : null}
+
         <label className="auth__label">
           Email
           <input

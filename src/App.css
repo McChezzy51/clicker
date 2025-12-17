@@ -12,6 +12,122 @@
   justify-items: center;
 }
 
+.topCorner {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  justify-items: end;
+  z-index: 10;
+}
+
+.topLeft {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  z-index: 10;
+}
+
+.topLeft__button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+}
+
+.leaderboard {
+  padding: 0.75rem;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 12px;
+  background: rgba(127, 127, 127, 0.12);
+  width: min(18rem, calc(100vw - 2rem));
+  text-align: left;
+}
+
+.leaderboard__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.leaderboard__status {
+  margin: 0;
+  opacity: 0.85;
+}
+
+.leaderboard__error {
+  margin: 0;
+  color: #ff6b6b;
+}
+
+.leaderboard__list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.leaderboard__row {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr auto;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+.leaderboard__rank {
+  opacity: 0.85;
+}
+
+.leaderboard__initials {
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.leaderboard__clicks {
+  font-variant-numeric: tabular-nums;
+}
+
+.topCorner__button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+}
+
+.topCorner__form {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 12px;
+  background: rgba(127, 127, 127, 0.12);
+  width: min(16rem, calc(100vw - 2rem));
+}
+
+.topCorner__label {
+  display: grid;
+  gap: 0.25rem;
+  text-align: left;
+}
+
+.topCorner__input {
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  background: transparent;
+  color: inherit;
+}
+
+.topCorner__row {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.topCorner__error {
+  margin: 0;
+  color: #ff6b6b;
+  text-align: left;
+}
+
 .clicker {
   display: grid;
   gap: 1rem;
@@ -22,6 +138,16 @@
 .clicker__count {
   margin: 0;
   font-size: 1.25rem;
+}
+
+.clicker__saving {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.clicker__error {
+  margin: 0;
+  color: #ff6b6b;
 }
 
 .clicker__button {

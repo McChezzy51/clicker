@@ -1,18 +1,59 @@
-rules_version='2'
+rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function validInitials(v) {
+      return v == null
+        || (v is string
+          && v.size() >= 1
+          && v.size() <= 4
+          && v.matches('^[A-Z0-9]{1,4}$'));
+    }
+
+    function validUserDoc() {
+      return request.resource.data.keys().hasOnly([
+          'initials',
+          'clicks',
+          'createdAt',
+          'updatedAt'
+        ])
+        && (request.resource.data.initials == null
+          || validInitials(request.resource.data.initials))
+        && request.resource.data.clicks is int
+        && request.resource.data.clicks >= 0;
+    }
+
+    match /users/{uid} {
+      // Public read so leaderboard works without auth.
+      allow read: if true;
+
+      // Users can only create/update their own doc.
+      allow create: if isOwner(uid) && validUserDoc();
+
+      allow update: if isOwner(uid)
+        && validUserDoc()
+        // createdAt should never change (but allow setting it once if missing).
+        && (
+          (resource.data.createdAt == null)
+          || request.resource.data.createdAt == resource.data.createdAt
+        )
+        // Disallow decreasing score.
+        && request.resource.data.clicks >= resource.data.clicks;
+
+      allow delete: if false;
+    }
+
+    // Default deny.
     match /{document=**} {
-      // This rule allows anyone with your database reference to view, edit,
-      // and delete all data in your database. It is useful for getting
-      // started, but it is configured to expire after 30 days because it
-      // leaves your app open to attackers. At that time, all client
-      // requests to your database will be denied.
-      //
-      // Make sure to write security rules for your app before that time, or
-      // else all client requests to your database will be denied until you
-      // update your rules.
-      allow read, write: if request.time < timestamp.date(2026, 1, 14);
+      allow read, write: if false;
     }
   }
 }
